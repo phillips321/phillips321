@@ -1,0 +1,25 @@
+2012-05-25	onesixtyone 0.8
+	* Added the -p switch in order to specify a custom port to scan.
+	* Fixed issues with outputting custom port numbers to the screen.
+
+2008-03-31      onesixtyone 0.7
+	* Changed links to point to new labs website.
+
+2006-11-02	onesixtyone 0.6
+	*  -w option now works.
+	* Spaces allowed in communitry strings read from files.
+	* Added "make dist" functionality
+	* Inlcuded download URL in help message + credit for original author
+
+2005-10-13	onesixtyone 0.4
+	* Now spools communities and hosts from disk instead of loading into ram
+
+2002-03-14	onesixtyone 0.3
+
+	* compiles on FreeBSD (thanks to Eric Zerangue)
+	* compiles on OpenBSD (thanks to methodic)
+	* compiles on Solaris
+
+2002-03-01	onesixtyone 0.2
+
+	* initial public release
