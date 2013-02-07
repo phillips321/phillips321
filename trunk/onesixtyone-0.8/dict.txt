@@ -49,6 +49,8 @@ ibm
 IBM
 ilmi
 ILMI
+INE
+ine
 intermec
 Intermec
 internal
