@@ -1,9 +1,0 @@
-Linux, FreeBSD, OpenBSD:
-
-make
-make install
-
-Solaris:
-
-make solaris
-make install
