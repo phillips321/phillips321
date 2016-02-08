@@ -4,20 +4,22 @@
 # License:    CC BY-SA 3.0
 # Use:        Quicky configure VLANs on Kali
 # Released:   www.phillips321.co.uk
-  version=0.2
+  version=0.3
+# Updates:
+#	fixed the ordering of interface & vlanid, whoops!
+#	added cvorrect IFS to represent newline char
 # Dependencies:
 #	vlan
 
 f_multi(){ #add multiple VLANS
 	echo "[+] Performing a multi VLAN setup"
-	for line in `cat ${1}`; do
+	for line in `cat config.txt`; do
 		echo ${line}
-		echo "next"
 		mode=`echo ${line} | cut -d" " -f1`
-		vlanid=`echo ${line} | cut -d" " -f2`
-		interface=`echo ${line} | cut -d" " -f3`
+		interface=`echo ${line} | cut -d" " -f2`
+		vlanid=`echo ${line} | cut -d" " -f3`
 		ipadd=`echo ${line} | cut -d" " -f4`
-		#echo ${mode} ${vlanid} ${interface} ${ipadd}
+		echo ${mode} ${vlanid} ${interface} ${ipadd}
 		if [[ ${mode} = "add" ]] ; then
 			f_addvlan
 		elif [[ ${mode} = "del" ]] ; then
@@ -51,7 +53,7 @@ f_usage(){ #echo usage
 }
 f_setup(){ #configure new line chars
 	OLDIFS=${IFS}
-	IFS=''
+	IFS=$'\n'
 }
 f_exit(){ #exit program after fix IFS
 	IFS=${OLDIFS}
