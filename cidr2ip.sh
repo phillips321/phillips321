@@ -63,7 +63,6 @@ if [ $force = 'h' ]; then
 fi
 
 if [ $force = 'i' ] || [ $force = 'b' ]; then
-
     old_IPS=$IPS
     IPS=$'\n'
     lines=($(cat $1)) # array
