@@ -4,7 +4,7 @@
 # License:    CC BY-SA 3.0
 # Use:        ipv6 finder
 # Released:   www.phillips321.co.uk
-  version=0.1
+  version=0.2
 # Dependencies:
 #	arp-scan
 
@@ -25,9 +25,9 @@ f_main(){
         done; echo "Done"
     echo -n "[+]ArpScanning local IPv4" ; ArpScan=`arp-scan -l -I $interface | grep -v packets | grep -v Interface | grep -v Starting | grep -v Ending | cut -f1,2 | sed 's/0\([0-9A-Fa-f]\)/\1/g'`
     echo ".Done"
-    echo "-----------------------------------------|--------------------|------------------|--------"
-    printf "%40s %1s %18s %1s %16s %1s %7s\n" "IPV6Address" "|" "MACAddress" "|" "IPV4Address" "|" "Info" 
-    echo "-----------------------------------------|--------------------|------------------|--------"
+    echo "--------------------------------|--------------------|------------------|-------------"
+    printf "%31s %1s %18s %1s %16s %1s %12s\n" "IPV6Address" "|" "MACAddress" "|" "IPV4Address" "|" "Info" 
+    echo "--------------------------------|--------------------|------------------|-------------"
     for IPV6Address in ${LinkLocalNeighbours}; do
         #Get MAC from NDP table
         if [ "$(uname)" == "Darwin" ]; then #must be OS X
@@ -40,20 +40,21 @@ f_main(){
         #Use MAC to pair up with IPv4 address
         if [ ! -z ${MACAddress} ]; then IPV4Address=`echo "${ArpScan}" | grep ${MACAddress} | cut -f1` ; fi
 
-        #Configure Info field You/Router/Node
+        #IPv4 not found so might be you or not in subnet?
         if [ -z ${IPV4Address} ]; then #Unable to find IPv4 so possibly you
             if [ "$(uname)" == "Darwin" ]; then #must be OS X
                 IPV4Address=`arp -anl | grep ${MACAddress} | awk '{print $1}'`
             else #must be Linux/Cywin?
                 IPV4Address=`ifconfig ${interface} | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
             fi
-            Info="You?"
+            Info="You"
         else #IPv4 found so now decididng if router or not
             if (echo "$RouterLocalNeighbours" | grep -q ${IPV6Address}) ; then Info="Router"; else Info="Node" ; fi
         fi
-        printf "%40s %1s %18s %1s %16s %1s %7s\n" ${IPV6Address} "|" ${MACAddress} "|" ${IPV4Address} "|" ${Info} 
+        if [ -z ${IPV4Address} ]; then IPV4Address="NotFound" ; Info="IPv6only?" ; fi
+        printf "%31s %1s %18s %1s %16s %1s %12s\n" ${IPV6Address} "|" ${MACAddress} "|" ${IPV4Address} "|" ${Info} 
     done
-    echo "-----------------------------------------|--------------------|------------------|--------"
+    echo "--------------------------------|--------------------|------------------|-------------"
 }
 
 f_usage(){ #echo usage
