@@ -4,7 +4,7 @@
 # License:    CC BY-SA 3.0
 # Use:        ipv6 finder
 # Released:   www.phillips321.co.uk
-  version=0.2
+  version=0.3
 # Dependencies:
 #	arp-scan
 
@@ -23,8 +23,13 @@ f_main(){
         for ((n=0;n<${loops};n++)); do
             RouterLocalNeighbours=`ping6 -c 2 -I $interface ff02::2 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u` ; echo -n "."
         done; echo "Done"
-    echo -n "[+]ArpScanning local IPv4" ; ArpScan=`arp-scan -l -I $interface | grep -v packets | grep -v Interface | grep -v Starting | grep -v Ending | cut -f1,2 | sed 's/0\([0-9A-Fa-f]\)/\1/g'`
+    
+    echo -n "[+]ArpScanning local IPv4"
+    ArpScan=`arp-scan -l -I $interface | grep -v packets | grep -v Interface | grep -v Starting | grep -v Ending | cut -f1,2 | sed 's/0\([0-9A-Fa-f]\)/\1/g'`
+    
     echo ".Done"
+
+
     echo "--------------------------------|--------------------|------------------|-------------"
     printf "%31s %1s %18s %1s %16s %1s %12s\n" "IPV6Address" "|" "MACAddress" "|" "IPV4Address" "|" "Info" 
     echo "--------------------------------|--------------------|------------------|-------------"
@@ -72,3 +77,4 @@ else
 fi
 
 f_main
+exit 0
