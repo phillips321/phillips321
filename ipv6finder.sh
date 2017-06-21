@@ -69,6 +69,8 @@ f_usage(){ #echo usage
     exit 1
 }
 
+hash arp-scan 2>/dev/null || { echo >&2 "[+] I require arp-scan but it's not installed.  Aborting."; exit 1; }
+
 if [[ $1 = "" ]] ; then
 	f_usage
 else
