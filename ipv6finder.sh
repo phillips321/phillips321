@@ -73,7 +73,7 @@ f_main(){
             else #must be Linux/Cywin?
                 IPV6G=`ip -6 neigh show | grep "${LongMAC}" | grep -v fe80 | awk {'print $1'} | head -n 1`
             fi
-            if [ -z ${IPV6G} ]; then IPV6G="NotFound - No Global Address?" ; fi
+            if [ -z ${IPV6G} ]; then IPV6G="NotFound" ; fi
         fi
 
         #read -n 1 -s -r -p "${IPV6LL} ${IPV4Address} ${ShortMAC} ${LongMAC}" ; echo "" #DEBUG LINE
