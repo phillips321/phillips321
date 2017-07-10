@@ -4,10 +4,11 @@
 # License:    CC BY-SA 3.0
 # Use:        ipv6 finder
 # Released:   www.phillips321.co.uk
-  version=0.4
+  version=0.5
 # Dependencies:
 #	arp-scan
 # ChangeLog
+#   v0.5    Checks if there is a local Global IPv6 Address
 #   v0.4    Added Global host discovery
 # ToDo:
 #	use MAC address as unique key
@@ -18,24 +19,32 @@ f_main(){
     LinkLocalNeighbours=`ping6 -c 3 -I ${interface} ff02::1 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u` ; echo -n "."
     echo "Done"    
     
-    #Ping broadcast address for global neighbours and store as GlobalNeighbours
-    echo -n "[+]Pinging (ff02::1) broadcast for nodes on Global Interface" ; 
-        if [ "$(uname)" == "Darwin" ]; then #must be OS X
-            IPV6Address=`ifconfig | grep inet6 | grep -v fe80 | grep -v "::1" | awk {'print $2'}`
-            GlobalNeighbours=`ping6 -c 3 -I ${interface} -S ${IPV6Address} ff02::1 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u` ; echo -n "."
-            { for i in ${GlobalNeighbours} ; do ping6 -c 1 -I ${interface} $i ; done } &> /dev/null
-        else #must be Linux/Cywin?
-            IPV6Address=`ip addr | grep inet6 | grep -v "::1" | grep -v fe80 | grep -v "temporary" | awk {'print $2'} | cut -d"/" -f1`
-            GlobalNeighbours=`ping6 -c 3 -I ${IPV6Address} ff02::1 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u | rev | cut -c 2- | rev` ; echo -n "."
-            { for i in ${GlobalNeighbours} ; do ping6 -c 1 -I ${interface} $i ; done } &> /dev/null
-        fi    
-    echo "Done"
-
     #Ping broadcast address for router neighbours and store as RouterLocalNeighbours
     echo -n "[+]Pinging (ff02::2) broadcast for routers"
     RouterLocalNeighbours=`ping6 -c 3 -I ${interface} ff02::2 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u` ; echo -n "."
     echo "Done"
-    
+
+    #Ping broadcast address for global neighbours and store as GlobalNeighbours
+    echo -n "[+]Pinging (ff02::1) broadcast for nodes on Global Interface" ; 
+        if [ "$(uname)" == "Darwin" ]; then #must be OS X
+            IPV6Address=`ifconfig | grep inet6 | grep -v fe80 | grep -v "::1" | awk {'print $2'}`
+            if [ ! -z ${IPV6Address} ]; then
+                GlobalNeighbours=`ping6 -c 3 -I ${interface} -S ${IPV6Address} ff02::1 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u` ; echo -n "."
+                { for i in ${GlobalNeighbours} ; do ping6 -c 1 -I ${interface} $i ; done } &> /dev/null
+            else
+                IPV6Address=""; GlobalNeighbours=""
+            fi
+        else #must be Linux/Cywin?
+            IPV6Address=`ip addr | grep inet6 | grep -v "::1" | grep -v fe80 | grep -v "temporary" | awk {'print $2'} | cut -d"/" -f1`
+            if [ ! -z ${IPV6Address} ]; then
+                GlobalNeighbours=`ping6 -c 3 -I ${IPV6Address} ff02::1 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u | rev | cut -c 2- | rev` ; echo -n "."
+                { for i in ${GlobalNeighbours} ; do ping6 -c 1 -I ${interface} $i ; done } &> /dev/null
+            else
+                IPV6Address=""; GlobalNeighbours=""
+            fi
+        fi    
+    echo "Done"
+
     echo -n "[+]ArpScanning local IPv4"
     ArpScan=`arp-scan -l -I ${interface} | grep -v packets | grep -v ${interface} | grep -v Starting | grep -v Ending | cut -f1,2`
     echo ".Done"
@@ -64,7 +73,7 @@ f_main(){
             else #must be Linux/Cywin?
                 IPV6G=`ip -6 neigh show | grep "${LongMAC}" | grep -v fe80 | awk {'print $1'} | head -n 1`
             fi
-            if [ -z ${IPV6G} ]; then IPV6G="NotFound" ; fi
+            if [ -z ${IPV6G} ]; then IPV6G="NotFound - No Global Address?" ; fi
         fi
 
         #read -n 1 -s -r -p "${IPV6LL} ${IPV4Address} ${ShortMAC} ${LongMAC}" ; echo "" #DEBUG LINE
