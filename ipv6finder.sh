@@ -28,7 +28,7 @@ f_main(){
     #Ping broadcast address for global neighbours and store as GlobalNeighbours
     echo -n "[+]Pinging (ff02::1) broadcast for nodes on Global Interface" ;
         if [ "$(uname)" == "Darwin" ]; then #must be OS X
-            IPV6Address=`ifconfig | grep inet6 | grep -v fe80 | grep -v "::1" | awk {'print $2'}`
+            IPV6Address=`ifconfig ${interface} | grep inet6 | grep -v fe80 | grep -v temporary | grep -v "::1" | awk {'print $2'}`
             if [ ! -z ${IPV6Address} ]; then
                 GlobalNeighbours=`ping6 -c 3 -I ${interface} -S ${IPV6Address} ff02::1 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u` ; echo -n "."
                 { for i in ${GlobalNeighbours} ; do ping6 -c 1 -I ${interface} $i ; done } &> /dev/null
