@@ -59,15 +59,15 @@ f_main(){
             ShortMAC=`ndp -nl ${IPV6LL} | grep ${IPV6LL} | awk '{print $2}'`
             LongMAC=`echo ${ShortMAC} | awk -F: '{printf("%02s:%02s:%02s:%02s:%02s:%02s",$1,$2,$3,$4,$5,$6)}' ; echo ""`
         else #must be Linux/Cywin?
-            ShortMAC=`ip -6 neigh show $(echo ${IPV6LL} | cut -d"%" -f1) | awk {'print $5'} | sed 's/0\([0-9A-Fa-f]\)/\1/g'`
-            LongMAC=`ip -6 neigh show $(echo ${IPV6LL} | cut -d"%" -f1) | awk {'print $5'}`
+            ShortMAC=`ip -6 neigh show $(echo ${IPV6LL} | head -n1 | cut -d"%" -f1) | awk {'print $5'} | sed 's/0\([0-9A-Fa-f]\)/\1/g'`
+            LongMAC=`ip -6 neigh show $(echo ${IPV6LL} | head -n1 | cut -d"%" -f1) | awk {'print $5'}`
             if [ -z ${ShortMAC} ] ; then ShortMAC=`cat /sys/class/net/${interface}/address | sed 's/0\([0-9A-Fa-f]\)/\1/g'`; fi
             if [ -z ${LongMAC} ] ; then LongMAC=`cat /sys/class/net/${interface}/address`; fi
         fi
 
         #Use MAC to pair up with IPv4 address and global IPv6
         if [ ! -z ${ShortMAC} ]; then
-            IPV4Address=`echo "${ArpScan}" | grep "${LongMAC}" | cut -f1`
+            IPV4Address=`echo "${ArpScan}" | grep "${LongMAC}" | head -n1 | cut -f1`
             IPV6G=""
             if [ "$(uname)" == "Darwin" ]; then #must be OS X
                 IPV6G=`ndp -anl | grep ${ShortMAC} | grep -v fe80 | awk {'print $1'} | tail -n 1`
