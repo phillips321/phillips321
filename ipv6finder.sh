@@ -4,10 +4,11 @@
 # License:    CC BY-SA 3.0
 # Use:        ipv6 finder
 # Released:   www.phillips321.co.uk
-  version=0.5
+  version=0.7
 # Dependencies:
 #	arp-scan
 # ChangeLog
+#   v0.7    Incremented version numbers properly - whoops!
 #   v0.6    Added bug where arp-scan comes back with Duplicates (DUP)
 #   v0.5    Checks if there is a local Global IPv6 Address
 #   v0.4    Added Global host discovery
