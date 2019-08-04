@@ -41,9 +41,9 @@ f_main(){
     ArpScan=$(sudo arp-scan -l -I ${interface} | grep -v packets | grep -v DUP | grep -v ${interface} | grep -v Starting | grep -v Ending | cut -f1,2)
     echo "Done"
 
-    echo "--------------------------------|------------------------------------------|--------------------|--------------------|-------------"
-    printf "%31s %1s %40s %1s %18s %1s %18s %1s %12s\n" "IPV6 Link Local" "|" "IPV6 Global" "|" "MAC Address" "|" "IPV4Address" "|" "Info"
-    echo "--------------------------------|------------------------------------------|--------------------|--------------------|-------------"
+    echo "---------------------------------------|------------------------------------------|--------------------|--------------------|-------------"
+    printf "%38s %1s %40s %1s %18s %1s %18s %1s %12s\n" "IPv6 Link Local" "|" "IPv6 Global" "|" "MAC Address" "|" "IPv4 Address" "|" "Info"
+    echo "---------------------------------------|------------------------------------------|--------------------|--------------------|-------------"
     for IPV6LL in ${LinkLocalNeighbours}; do
         #Get LinkLocal MAC from NDP table
         ShortMAC=$(ip -6 neigh show $(echo ${IPV6LL} | head -n1 | cut -d"%" -f1) | awk {'print $5'} | sed 's/0\([0-9A-Fa-f]\)/\1/g')
@@ -76,9 +76,9 @@ f_main(){
         fi
         if [ -z ${IPV4Address} ]; then IPV4Address="NotFound" ; Info="IPv6only?" ; fi
         if [[ ${LongMAC} == *"incomplete"* ]]; then LongMAC="00:00:00:00:00:00" ; fi
-        printf "%31s %1s %40s %1s %18s %1s %18s %1s %12s\n" ${IPV6LL} "|" ${IPV6G} "|" ${LongMAC} "|" ${IPV4Address} "|" ${Info}
+        printf "%38s %1s %40s %1s %18s %1s %18s %1s %12s\n" ${IPV6LL} "|" ${IPV6G} "|" ${LongMAC} "|" ${IPV4Address} "|" ${Info}
     done
-    echo "--------------------------------|------------------------------------------|--------------------|--------------------|-------------"
+    echo "---------------------------------------|------------------------------------------|--------------------|--------------------|-------------"
 }
 
 f_usage(){ #echo usage
