@@ -16,18 +16,18 @@
 #	use MAC address as unique key
 
 f_main(){
-    #Ping broadcast address for local neighbours and store as LinkLocalNeighbours
-    echo -n "[+]Pinging (ff02::1) broadcast for nodes on link local. "
+    #Ping multicast address for local neighbours and store as LinkLocalNeighbours
+    echo -n "[+]Pinging (ff02::1) multicast for nodes on link local. "
     LinkLocalNeighbours=$(ping6 -c 3 -I ${interface} ff02::1 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u)
     echo "Done"
 
-    #Ping broadcast address for router neighbours and store as RouterLocalNeighbours
-    echo -n "[+]Pinging (ff02::2) broadcast for routers. "
+    #Ping multicast address for router neighbours and store as RouterLocalNeighbours
+    echo -n "[+]Pinging (ff02::2) multicast for routers. "
     RouterLocalNeighbours=$(ping6 -c 3 -I ${interface} ff02::2 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u)
     echo "Done"
 
-    #Ping broadcast address for global neighbours and store as GlobalNeighbours
-    echo -n "[+]Pinging (ff02::1) broadcast for nodes on Global Interface. "
+    #Ping multicast address for global neighbours and store as GlobalNeighbours
+    echo -n "[+]Pinging (ff02::1) multicast for nodes on Global Interface. "
     IPV6Address=$(ip -6 addr | grep inet6 | grep -v "::1" | grep -v fe80 | grep -v "temporary" | awk {'print $2'} | cut -d"/" -f1)
     if [ ! -z ${IPV6Address} ]; then
         GlobalNeighbours=$(ping6 -c 3 -I ${IPV6Address} ff02::1 | grep icmp_seq | cut -d" " -f4 | cut -d"," -f 1 | sort -u | rev | cut -c 2- | rev)
@@ -37,8 +37,8 @@ f_main(){
     fi
     echo "Done"
 
-    echo -n "[+]ArpScanning local IPv4. "
-    ArpScan=$(arp-scan -l -I ${interface} | grep -v packets | grep -v DUP | grep -v ${interface} | grep -v Starting | grep -v Ending | cut -f1,2)
+    echo -n "[+]ArpScanning local IPv4. (if you are not running as root, you will be prompted for your password by sudo) "
+    ArpScan=$(sudo arp-scan -l -I ${interface} | grep -v packets | grep -v DUP | grep -v ${interface} | grep -v Starting | grep -v Ending | cut -f1,2)
     echo "Done"
 
     echo "--------------------------------|------------------------------------------|--------------------|--------------------|-------------"
