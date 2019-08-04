@@ -4,10 +4,11 @@
 # License:    CC BY-SA 3.0
 # Use:        ipv6 finder
 # Released:   www.phillips321.co.uk
-  version=0.7
+  version=0.8
 # Dependencies:
-#	arp-scan
+#	arp-scan, sudo
 # ChangeLog
+#   v0.8    Dropped MacOS support, added support for older Linux, removed ifconfig dependency, cleaned up
 #   v0.7    Incremented version numbers properly - whoops!
 #   v0.6    Added bug where arp-scan comes back with Duplicates (DUP)
 #   v0.5    Checks if there is a local Global IPv6 Address
